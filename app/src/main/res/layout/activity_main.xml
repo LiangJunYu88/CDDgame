@@ -10,7 +10,7 @@
 
     <ImageButton
             android:layout_width="131dp"
-            android:layout_height="45dp" app:srcCompat="@drawable/menu1" android:id="@+id/imageButton2"
+            android:layout_height="45dp" app:srcCompat="@drawable/menu1" android:id="@+id/PlayButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.88"
@@ -20,25 +20,24 @@
             android:layout_marginBottom="8dp"/>
     <ImageButton
             android:layout_width="131dp"
-            android:layout_height="45dp" app:srcCompat="@drawable/menu4" android:id="@+id/imageButton3"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton2"
-            app:layout_constraintStart_toStartOf="@+id/imageButton2"
+            android:layout_height="45dp" app:srcCompat="@drawable/menu4" android:id="@+id/SettingButton"
+            app:layout_constraintTop_toBottomOf="@+id/PlayButton"
+            app:layout_constraintStart_toStartOf="@+id/PlayButton"
             android:layout_marginTop="4dp"/>
     <ImageButton
             android:layout_width="131dp"
-            android:layout_height="45dp" app:srcCompat="@drawable/menu2" android:id="@+id/imageButton5"
-            app:layout_constraintStart_toStartOf="@+id/imageButton3"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton3" android:layout_marginTop="4dp"/>
+            android:layout_height="45dp" app:srcCompat="@drawable/menu2" android:id="@+id/HelpButton"
+            app:layout_constraintStart_toStartOf="@+id/SettingButton"
+            app:layout_constraintTop_toBottomOf="@+id/SettingButton" android:layout_marginTop="4dp"/>
     <ImageButton
             android:layout_width="131dp"
-            android:layout_height="45dp" app:srcCompat="@drawable/menu3" android:id="@+id/imageButton6"
-            app:layout_constraintStart_toStartOf="@+id/imageButton7"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton5"
+            android:layout_height="45dp" app:srcCompat="@drawable/menu3" android:id="@+id/AboutButton"
+            app:layout_constraintStart_toStartOf="@+id/ExitButton"
+            app:layout_constraintTop_toBottomOf="@+id/HelpButton"
             android:layout_marginTop="4dp"/>
     <ImageButton
             android:layout_width="131dp"
-            android:layout_height="45dp" app:srcCompat="@drawable/menu5" android:id="@+id/imageButton7"
-            app:layout_constraintEnd_toEndOf="@+id/imageButton5"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton6" android:layout_marginTop="4dp"/>
-    view.bringToFront()
+            android:layout_height="45dp" app:srcCompat="@drawable/menu5" android:id="@+id/ExitButton"
+            app:layout_constraintEnd_toEndOf="@+id/HelpButton"
+            app:layout_constraintTop_toBottomOf="@+id/AboutButton" android:layout_marginTop="4dp"/>
 </android.support.constraint.ConstraintLayout>
