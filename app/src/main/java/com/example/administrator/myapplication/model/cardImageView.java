@@ -14,7 +14,6 @@ public class cardImageView extends View implements cardImage {
     private Paint paint;
     private Bitmap mbitmap;
     private card  mcard;
-    private int top = 50;
     private Rect src;
     private RectF des;
     int num;
@@ -30,19 +29,36 @@ public class cardImageView extends View implements cardImage {
         mbitmap = BitmapFactory.decodeResource(context.getResources(), cardImage[mcard.getCardNumber()-3][mcard.getCardColor()]);
         System.out.println("created");
     }
-    public void click(){
-        if (isClicked) {
-            top -= 50;
-            this.isClicked = !this.isClicked;
+    //点击事件
+    @Override
+    public boolean onTouchEvent(MotionEvent e)
+    {
+        if(e.getAction() == MotionEvent.ACTION_UP)
+        {
+            if(isClicked)//已经被点取
+            {
+                //向下移动
+                scrollBy(0,-20);
+                //
+                isClicked = false;
+            }
+            else
+            {
+                //向上移动
+                scrollBy(0,20);
+                isClicked = true;
+            }
         }
-        else {
-            top += 50;
-            this.isClicked = !this.isClicked;
-        }
+
+
+        return true;
     }
+
+      //画出卡牌
+
     @Override
     protected void onDraw(Canvas canvas) {
-    canvas.drawBitmap(mbitmap,200+100*(num-1),top,paint);
+    canvas.drawBitmap(mbitmap,200+100*(num-1),50,paint);
     }
 
 }
