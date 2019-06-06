@@ -3,9 +3,6 @@ package com.example.administrator.myapplication.model;
 import java.util.ArrayList;
 import java.util.Random;
 
-enum color{
-    club,diamond,heart,spade
-}
 enum BotType
 {
     PASSIVE, AGGRESSIVE
@@ -38,16 +35,16 @@ public class MainGameModel {
     {
 
         cardDeck.clear();
-        color c = color.club;
+        card.color c = card.color.club;
         for(int i=3;i<=15;i++)
             cardDeck.add(new card(c,i));
-        c=color.diamond;
+        c= card.color.diamond;
         for(int i=3;i<=15;i++)
             cardDeck.add(new card(c,i));
-        c=color.heart;
+        c= card.color.heart;
         for(int i=3;i<=15;i++)
             cardDeck.add(new card(c,i));
-        c=color.spade;
+        c= card.color.spade;
         for(int i=3;i<=15;i++)
             cardDeck.add(new card(c,i));
     }
@@ -60,6 +57,7 @@ public class MainGameModel {
             int currentCardsLeft = cardDeck.size();
             int index = rand.nextInt(currentCardsLeft);
             playerInstance.cardsInHand.add(cardDeck.get(index));
+            cardDeck.remove(index);
         }
         //给BOT发牌
         for(int i=0;i<3;i++)
@@ -68,6 +66,7 @@ public class MainGameModel {
                 int currentCardsLeft = cardDeck.size();
                 int index = rand.nextInt(currentCardsLeft);
                 botInstance[i].cardsInHand.add(cardDeck.get(index));
+                cardDeck.remove(index);
             }
         }
     }
@@ -82,61 +81,6 @@ public class MainGameModel {
 }
 
 
-class card
-{
-    private color cardColor;
-    private int cardNumber;
-
-
-    public int getCardColor() {
-        int temp=0;
-        switch (this.cardColor){
-            case diamond:
-                temp = 0;
-                break;
-            case club:
-                temp = 1;
-                break;
-            case heart:
-                temp = 2;
-                break;
-            case spade:
-                temp = 3;
-                break;
-        }
-        return temp;
-    }
-
-
-    public int getCardNumber() {
-        return cardNumber;
-    }
-
-    public card(color c, int n) //设置为public以便显示图像时读取
-    {
-        cardNumber = n;
-        cardColor = c;
-    }
-}
-
-class playerObject
-{
-    public playerObject()
-    {
-        cardsInHand =new ArrayList<card>();
-       //无参构造方法给bot继承
-    }
-    public playerObject(String name)
-    {
-        //为填入玩家姓名预留接口
-        playerName = name;
-    }
-
-    public String playerName;
-    public ArrayList<card> cardsInHand;
-
-
-}
 class botObject extends playerObject
 {    private int botID;
     botObject(int id)

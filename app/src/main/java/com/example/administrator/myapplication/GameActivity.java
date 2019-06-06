@@ -1,19 +1,32 @@
 package com.example.administrator.myapplication;
 
 import android.content.pm.ActivityInfo;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import com.example.administrator.myapplication.model.*;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.example.administrator.myapplication.model.MainGameModel;
 
+import java.util.ArrayList;
+
 public class GameActivity extends AppCompatActivity {
+    private ArrayList<cardImageView> playerHandCards;
+    private FrameLayout layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_game);
-      MainGameModel.getMainGameModel();
+        layout = findViewById(R.id.cardLayout);
+        playerHandCards = new ArrayList<>();
+        //画出玩家手牌
+        for (int i=0;i<13;i++){
+            paintCards(MainGameModel.getMainGameModel().playerInstance.cardsInHand.get(i),i);
+        }
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -30,5 +43,11 @@ public class GameActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         );
     }
+
+private void paintCards(card mcard,int num){
+        playerHandCards.add(new cardImageView(this,mcard,num));
+        layout.addView(playerHandCards.get(playerHandCards.size()-1));
+}
+
 
 }

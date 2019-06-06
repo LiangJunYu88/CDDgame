@@ -7,10 +7,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.AttributeSet;
 import android.view.View;
 
-import java.text.AttributedCharacterIterator;
 
 public class cardImageView extends View implements cardImage {
     private Paint paint;
@@ -18,21 +16,23 @@ public class cardImageView extends View implements cardImage {
     private card  mcard;
     private Rect src;
     private RectF des;
+    int num;
     boolean isClicked;
-    public cardImageView(Context contest,card c) {
-        super(contest);
+    public cardImageView(Context context,card c, int num) {
+        super(context);
         this.mcard = c;
+        this.num = num;
         paint = new Paint();
         src = new Rect();
         des = new RectF();
         isClicked = false;
-        mbitmap = BitmapFactory.decodeResource(contest.getResources(), cardImage[mcard.getCardColor()][mcard.getCardNumber()-3]);
+        mbitmap = BitmapFactory.decodeResource(context.getResources(), cardImage[mcard.getCardNumber()-3][mcard.getCardColor()]);
+        System.out.println("created");
     }
 
     @Override
         protected void onDraw(Canvas canvas) {
-    src.set(0,0,mbitmap.getWidth(),mbitmap.getHeight());
-    des.set(0,0,100,100);
-    canvas.drawBitmap(mbitmap,src,des,paint);
+    canvas.drawBitmap(mbitmap,200+100*(num-1),50,paint);
     }
+
 }
