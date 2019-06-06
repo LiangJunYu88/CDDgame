@@ -27,7 +27,6 @@ public class MainGameModel {
         for(int i=0;i<3;i++)
             botInstance[i] = new botObject(i);
 
-
     }
     public void ini(){
         //生成牌堆

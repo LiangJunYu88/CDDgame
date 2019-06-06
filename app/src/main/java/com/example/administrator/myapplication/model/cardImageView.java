@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.view.MotionEvent;
 import android.view.View;
 
 
@@ -13,6 +14,7 @@ public class cardImageView extends View implements cardImage {
     private Paint paint;
     private Bitmap mbitmap;
     private card  mcard;
+    private int top = 50;
     private Rect src;
     private RectF des;
     int num;
@@ -28,13 +30,19 @@ public class cardImageView extends View implements cardImage {
         mbitmap = BitmapFactory.decodeResource(context.getResources(), cardImage[mcard.getCardNumber()-3][mcard.getCardColor()]);
         System.out.println("created");
     }
-    //点击事件
+    public void click(){
+        if (isClicked) {
+            top -= 50;
+            this.isClicked = !this.isClicked;
+        }
+        else {
+            top += 50;
+            this.isClicked = !this.isClicked;
+        }
+    }
     @Override
-    
-      //画出卡牌
-    @Override
-        protected void onDraw(Canvas canvas) {
-    canvas.drawBitmap(mbitmap,200+100*(num-1),50,paint);
+    protected void onDraw(Canvas canvas) {
+    canvas.drawBitmap(mbitmap,200+100*(num-1),top,paint);
     }
 
 }

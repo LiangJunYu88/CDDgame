@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.example.administrator.myapplication.model.*;
 
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -20,7 +21,6 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_game);
         layout = findViewById(R.id.cardLayout);
@@ -46,19 +46,20 @@ public class GameActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         );
     }
+    //禁用返回键
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
             if (keyCode == KeyEvent.KEYCODE_BACK) return true;
             return super.onKeyDown(keyCode,event);
     }
-private void paintCards(card mcard,int num){
+
+
+    private void paintCards(card mcard,int num){
         playerHandCards.add(new cardImageView(this,mcard,num));
         layout.addView(playerHandCards.get(playerHandCards.size()-1));
-}
+    }
 
-    public void exitGame(View view){
-        Intent it = new Intent(this,MainActivity.class);
-        MainGameModel.getMainGameModel().ini();
-        startActivity(it);
+    public void backMenu(View view){
+      finish();
     }
 }

@@ -76,6 +76,6 @@
         android:layout_marginEnd="76dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:onClick="exitGame"
+        android:onClick="backMenu"
         app:srcCompat="@drawable/backgame" />
 </android.support.constraint.ConstraintLayout>
