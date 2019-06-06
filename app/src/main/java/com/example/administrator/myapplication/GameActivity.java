@@ -1,10 +1,12 @@
 package com.example.administrator.myapplication;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import com.example.administrator.myapplication.model.*;
+
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -23,6 +25,7 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         layout = findViewById(R.id.cardLayout);
         playerHandCards = new ArrayList<>();
+        MainGameModel.getMainGameModel().ini();
         //画出玩家手牌
         for (int i=0;i<13;i++){
             paintCards(MainGameModel.getMainGameModel().playerInstance.cardsInHand.get(i),i);
@@ -43,11 +46,19 @@ public class GameActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         );
     }
-
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+            if (keyCode == KeyEvent.KEYCODE_BACK) return true;
+            return super.onKeyDown(keyCode,event);
+    }
 private void paintCards(card mcard,int num){
         playerHandCards.add(new cardImageView(this,mcard,num));
         layout.addView(playerHandCards.get(playerHandCards.size()-1));
 }
 
-
+    public void exitGame(View view){
+        Intent it = new Intent(this,MainActivity.class);
+        MainGameModel.getMainGameModel().ini();
+        startActivity(it);
+    }
 }

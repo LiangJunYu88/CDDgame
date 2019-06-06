@@ -1,5 +1,4 @@
 package com.example.administrator.myapplication.model;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,7 +28,10 @@ public class cardImageView extends View implements cardImage {
         mbitmap = BitmapFactory.decodeResource(context.getResources(), cardImage[mcard.getCardNumber()-3][mcard.getCardColor()]);
         System.out.println("created");
     }
-
+    //点击事件
+    @Override
+    
+      //画出卡牌
     @Override
         protected void onDraw(Canvas canvas) {
     canvas.drawBitmap(mbitmap,200+100*(num-1),50,paint);

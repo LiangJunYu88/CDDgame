@@ -20,17 +20,21 @@ public class MainGameModel {
     {
         cardDeck = new ArrayList<card>();
         botInstance = new botObject[3];
-        //生成牌堆
-        createNewCardDeck();
+
         //创建玩家与电脑玩家的对象
         playerInstance = new playerObject();
 
         for(int i=0;i<3;i++)
             botInstance[i] = new botObject(i);
+
+
+    }
+    public void ini(){
+        //生成牌堆
+        createNewCardDeck();
         //发牌
         distributeCards();
     }
-
     private void createNewCardDeck()
     {
 
