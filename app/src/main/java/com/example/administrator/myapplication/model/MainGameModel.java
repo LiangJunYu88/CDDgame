@@ -12,7 +12,8 @@ public class MainGameModel {
     static private MainGameModel mainGameModelInstance;
     public ArrayList<card> cardDeck;//用于存储卡牌的牌堆
     public playerObject playerInstance;//人类玩家的玩家对象
-    public botObject[] botInstance;
+    public botObject[] botInstance;//电脑玩家
+
 
 
     //方法
@@ -20,10 +21,9 @@ public class MainGameModel {
     {
         cardDeck = new ArrayList<card>();
         botInstance = new botObject[3];
-
+        cardDeck = new ArrayList<>();
         //创建玩家与电脑玩家的对象
         playerInstance = new playerObject();
-
         for(int i=0;i<3;i++)
             botInstance[i] = new botObject(i);
 
