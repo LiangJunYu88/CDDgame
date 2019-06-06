@@ -15,24 +15,28 @@ public class MainGameModel {
     static private MainGameModel mainGameModelInstance;
     public ArrayList<card> cardDeck;//用于存储卡牌的牌堆
     public playerObject playerInstance;//人类玩家的玩家对象
-    public botObject [] botInstance;
+    public botObject[] botInstance;
 
 
     //方法
     private MainGameModel()
     {
+        cardDeck = new ArrayList<card>();
+        botInstance = new botObject[3];
         //生成牌堆
         createNewCardDeck();
         //创建玩家与电脑玩家的对象
         playerInstance = new playerObject();
+
         for(int i=0;i<3;i++)
-            botInstance[i] = new botObject();
+            botInstance[i] = new botObject(i);
         //发牌
         distributeCards();
     }
 
     private void createNewCardDeck()
     {
+
         cardDeck.clear();
         color c = color.club;
         for(int i=3;i<=15;i++)
@@ -63,11 +67,11 @@ public class MainGameModel {
             for (int j = 0; j < 13; j++) {
                 int currentCardsLeft = cardDeck.size();
                 int index = rand.nextInt(currentCardsLeft);
-                botInstance[j].cardsInHand.add(cardDeck.get(index));
+                botInstance[i].cardsInHand.add(cardDeck.get(index));
             }
         }
     }
-    public MainGameModel getMainGameModel()
+    public static MainGameModel getMainGameModel()
     {
         if(mainGameModelInstance == null)
         {
@@ -84,8 +88,23 @@ class card
     private int cardNumber;
 
 
-    public color getCardColor() {
-        return cardColor;
+    public int getCardColor() {
+        int temp=0;
+        switch (this.cardColor){
+            case diamond:
+                temp = 0;
+                break;
+            case club:
+                temp = 1;
+                break;
+            case heart:
+                temp = 2;
+                break;
+            case spade:
+                temp = 3;
+                break;
+        }
+        return temp;
     }
 
 
@@ -104,7 +123,8 @@ class playerObject
 {
     public playerObject()
     {
-        //无参构造方法给bot继承
+        cardsInHand =new ArrayList<card>();
+       //无参构造方法给bot继承
     }
     public playerObject(String name)
     {
@@ -118,11 +138,12 @@ class playerObject
 
 }
 class botObject extends playerObject
-{
-    botObject()
+{    private int botID;
+    botObject(int id)
     {
         //懒得实现AI了，全被动（只会pass）完事了
         super();
+        botID = id;
         botType = BotType.PASSIVE;
     }
 

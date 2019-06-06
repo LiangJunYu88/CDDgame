@@ -5,13 +5,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-public class GameActivity extends AppCompatActivity {
+import com.example.administrator.myapplication.model.MainGameModel;
 
+public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_game);
+      MainGameModel.getMainGameModel();
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
