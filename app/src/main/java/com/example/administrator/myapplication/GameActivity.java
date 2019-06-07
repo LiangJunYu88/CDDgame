@@ -74,8 +74,8 @@ public class GameActivity extends AppCompatActivity {
         playerHandCards.add(new cardImageView(this,mcard,num));
         layout.addView(playerHandCards.get(playerHandCards.size()-1));
     }
-    //不出按钮
-    public void buchu(View view){
+    //重选按钮
+    public void chongxuan(View view){
         for (int i=0;i<playerHandCards.size();i++){
             if (playerHandCards.get(i).getIsClicked())
                 playerHandCards.get(i).whenClick();
@@ -92,11 +92,11 @@ public class GameActivity extends AppCompatActivity {
             if (playerHandCards.get(i).getIsClicked()){
                 cardOnDesk.add(playerHandCards.get(i));
                 playerHandCards.get(i).moveToCenter(cardOnDesk.size());
-
                 playerHandCards.remove(i);
                 i=i-1;
             }
         }
+
         //出牌逻辑
 
     }

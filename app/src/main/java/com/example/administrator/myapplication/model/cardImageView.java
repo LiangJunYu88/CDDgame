@@ -46,7 +46,9 @@ public class cardImageView extends View implements cardImage {
         bottom = top + mbitmap.getHeight();
         System.out.println("created");
     }
-
+    public card getMcard(){
+        return mcard;
+    }
     public int getleft(){
 
         return left;

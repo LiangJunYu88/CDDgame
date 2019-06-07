@@ -10,60 +10,132 @@
 
     <ImageButton
         android:id="@+id/imageButton"
-        android:layout_width="100dp"
-        android:layout_height="52dp"
+        android:layout_width="73dp"
+        android:layout_height="34dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="52dp"
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
         android:onClick="chupai"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imageButton2"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.614"
+        app:layout_constraintVertical_bias="0.634"
         app:srcCompat="@drawable/btn_chupai" />
 
     <ImageButton
         android:id="@+id/imageButton2"
-        android:layout_width="100dp"
-        android:layout_height="52dp"
+        android:layout_width="72dp"
+        android:layout_height="34dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
-        android:onClick="buchu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.65"
+        app:layout_constraintHorizontal_bias="0.545"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.617"
+        app:layout_constraintVertical_bias="0.634"
         app:srcCompat="@drawable/btn_pass" />
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/手牌区"
-        android:layout_width="match_parent"
-        android:layout_height="112dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton"
-        app:layout_constraintVertical_bias="1.0">
-
-
-    </android.support.constraint.ConstraintLayout>
 
     <ImageButton
         android:id="@+id/imageButton3"
-        android:layout_width="126dp"
-        android:layout_height="61dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="76dp"
+        android:layout_width="72dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="60dp"
+        android:onClick="backMenu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:onClick="backMenu"
         app:srcCompat="@drawable/backgame" />
+
+    <ImageButton
+        android:id="@+id/imageButton5"
+        android:layout_width="72dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="52dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="chongxuan"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.285"
+        app:layout_constraintStart_toEndOf="@+id/imageButton2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.634"
+        app:srcCompat="@drawable/btn_redo" />
+
+    <ImageView
+        android:id="@+id/botIcon1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/icon_farmer" />
+
+    <ImageView
+        android:id="@+id/botCard1"
+        android:layout_width="56dp"
+        android:layout_height="74dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/botIcon1"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/card_bg" />
+
+
+    <ImageView
+        android:id="@+id/botIcon2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="256dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/icon_farmer" />
+
+    <ImageView
+        android:id="@+id/botCard2"
+        android:layout_width="56dp"
+        android:layout_height="74dp"
+        android:layout_marginStart="304dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="284dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/botIcon2"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/card_bg" />
+
+    <ImageView
+        android:id="@+id/botIcon3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="88dp"
+        android:layout_marginEnd="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/icon_farmer" />
+
+    <ImageView
+        android:id="@+id/botCard3"
+        android:layout_width="56dp"
+        android:layout_height="74dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="116dp"
+        android:layout_marginBottom="196dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/botIcon3"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/card_bg" />
+
 </android.support.constraint.ConstraintLayout>

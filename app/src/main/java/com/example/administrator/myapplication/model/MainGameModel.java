@@ -95,4 +95,6 @@ class botObject extends playerObject
     }
 
     BotType botType;
+
+
 }
