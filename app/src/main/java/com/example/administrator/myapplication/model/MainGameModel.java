@@ -1,6 +1,7 @@
 package com.example.administrator.myapplication.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 enum BotType
@@ -18,9 +19,9 @@ public class MainGameModel {
     //属性
     static private MainGameModel mainGameModelInstance;
     public ArrayList<card> cardDeck;//用于存储卡牌的牌堆
-    public ArrayList<card> cardOnDesk;//存储桌上的牌
-    public int lastShownPlayerIndex;
-    public CardsType lastShownCardsType;
+    public static ArrayList<card> cardOnDesk;//存储桌上的牌
+    public static int lastShownPlayerIndex;//上一位出牌的玩家
+    public static CardsType lastShownCardsType = CardsType.None;//上一轮打出的牌型
     public playerObject playerInstance;//人类玩家的玩家对象
     public botObject[] botInstance;//电脑玩家
 
@@ -34,7 +35,7 @@ public class MainGameModel {
         //创建玩家与电脑玩家的对象
         playerInstance = new playerObject();
         for (int i = 1; i <= 3; i++)
-            botInstance[i] = new botObject(i);
+            botInstance[i - 1] = new botObject(i);
     }
 
     public void ini() {
@@ -93,87 +94,411 @@ public class MainGameModel {
         return mainGameModelInstance;
     }
 
-    public ArrayList<card> showCards(playerObject playerInstance, int[] indexArray, int cardsSelected) {
-        ArrayList<card> cardArrayList = new ArrayList<>();
-        int playerCardsLeft = playerInstance.cardsInHand.size();
-
-
-        boolean isAbleToShow = false;
-
-        for (int i = 0; i < cardsSelected; i++)
-            cardArrayList.add(playerInstance.cardsInHand.get(indexArray[i]));
-
-
-        switch (cardsSelected) {
+    //playerInstance 用来判定玩家出牌还是bot出牌
+    public boolean showCards(playerObject playerInstance, ArrayList<card> selectCards, ArrayList<Integer> selectCardsIndex) {
+        //手牌大于5重选
+        if (selectCards.size() > 5) return false;
+        //第一个出牌者的牌要有方块三
+//        if (lastShownCardsType == CardsType.None) {
+//            boolean hasThree = false;
+//            for (int i = 0; i < selectCards.size(); i++) {
+//                if (selectCards.get(i).getCardColor() == 0 && selectCards.get(i).getCardNumber() == 3)
+//                    hasThree = true;
+//            }
+//            if (!hasThree)
+//                return false;
+//        }
+        //给selectCards排序
+        for (int i = 0; i < selectCards.size() - 1; i++)
+            for (int j = 0; j < selectCards.size() - i - 1; j++) {
+                if (selectCards.get(j).getCardNumber() > selectCards.get(j + 1).getCardNumber()) {
+                    Collections.swap(selectCards, j, j + 1);
+                    Collections.swap(selectCardsIndex, j, j + 1);
+                }
+                //数字相同排花色
+                if (selectCards.get(j).getCardNumber() == selectCards.get(j + 1).getCardNumber()) {
+                    if (selectCards.get(j).getCardColor() > selectCards.get(j + 1).getCardColor()) {
+                        Collections.swap(selectCards, j, j + 1);
+                        Collections.swap(selectCardsIndex, j, j + 1);
+                    }
+                }
+            }
+        //判断牌型
+        switch (selectCards.size()) {
             case 1:
-
-                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
-                    isAbleToShow = true;
+                if (lastShownCardsType == CardsType.None || lastShownPlayerIndex == playerInstance.playerId) {
                     lastShownCardsType = CardsType.Single;
+                    playerInstance.cardsInHand.remove(selectCards.get(0));//移除手牌
+                    cardOnDesk.add(selectCards.get(0));
+                    lastShownPlayerIndex = this.playerInstance.playerId;//修改上一个出牌玩家
+                    return true;
                 } else if (lastShownCardsType == CardsType.Single) {
-                    if (cardArrayList.get(0).compareTo(cardOnDesk.get(0)) == 1) {
-                        isAbleToShow = true;
+                    if (selectCards.get(0).compareTo(cardDeck.get(0)) == 1) {
+                        cardOnDesk.clear();
                         lastShownCardsType = CardsType.Single;
+                        playerInstance.cardsInHand.remove(selectCards.get(0));//移除手牌
+                        cardOnDesk.add(selectCards.get(0));
+                        lastShownPlayerIndex = this.playerInstance.playerId;
+                        cardOnDesk.clear();
+                        return true;
                     }
                 }
                 break;
             case 2:
-                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
-                    isAbleToShow = true;
+                if (lastShownCardsType == CardsType.None || lastShownPlayerIndex == playerInstance.playerId) {
+                    if (selectCards.get(0).getCardNumber() != selectCards.get(1).getCardNumber())
+                        return false;
                     lastShownCardsType = CardsType.Double;
+                    for (int i = 0; i < 2; i++) {
+                        playerInstance.cardsInHand.remove( selectCards.get(i));
+                        cardOnDesk.add(selectCards.get(i));
+                    }
+                    lastShownPlayerIndex = this.playerInstance.playerId;
+
+                    return true;
                 } else if (lastShownCardsType == CardsType.Double) {
-                    card newCompareCard;
-                    card oldCompareCard;
-                    if (cardArrayList.get(0).compareTo(cardArrayList.get(1)) == 1)
-                        newCompareCard = cardArrayList.get(0);
-                    else newCompareCard = cardArrayList.get(1);
-                    if (cardOnDesk.get(0).compareTo(cardOnDesk.get(1)) == 1) oldCompareCard = cardOnDesk.get(0);
-                    else oldCompareCard = cardOnDesk.get(1);
-                    if (newCompareCard.compareTo(oldCompareCard) == 1) {
-                        isAbleToShow = true;
-                        lastShownCardsType = CardsType.Double;
+                    if (selectCards.get(0).getCardNumber() != selectCards.get(1).getCardNumber())
+                        return false;
+                    if (selectCards.get(1).compareTo(cardOnDesk.get(1)) == 1) {
+                        cardOnDesk.clear();
+                        for (int i = 0; i < 2; i++) {
+                            playerInstance.cardsInHand.remove( selectCards.get(i));
+                            cardOnDesk.add(selectCards.get(i));
+                        }
+                        lastShownPlayerIndex = this.playerInstance.playerId;
+
+                        return true;
                     }
                 }
                 break;
             case 3:
-                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
-                    isAbleToShow = true;
-                    lastShownCardsType = CardsType.Triple;
-                } else if (lastShownCardsType == CardsType.Triple) {
-                    if (cardArrayList.get(0).compareTo(cardOnDesk.get(0)) == 1) {
-                        isAbleToShow = true;
+                if (lastShownCardsType == CardsType.None || lastShownPlayerIndex == playerInstance.playerId) {
+                    if (selectCards.get(0).getCardNumber() == selectCards.get(1).getCardNumber() &&
+                            selectCards.get(0).getCardNumber() == selectCards.get(2).getCardNumber()) {
                         lastShownCardsType = CardsType.Triple;
+                        lastShownPlayerIndex = this.playerInstance.playerId;
+                        for (int i = 0; i < 3; i++) {
+                            playerInstance.cardsInHand.remove( selectCards.get(i));
+                            cardOnDesk.add(selectCards.get(i));
+                        }
+                        return true;
+                    }
+                } else if (lastShownCardsType == CardsType.Triple) {
+                    if (selectCards.get(0).getCardNumber() == selectCards.get(1).getCardNumber() &&
+                            selectCards.get(0).getCardNumber() == selectCards.get(2).getCardNumber()) {
+                        if (selectCards.get(2).compareTo(cardOnDesk.get(2)) == 1) {
+                            cardOnDesk.clear();
+                            lastShownPlayerIndex = this.playerInstance.playerId;
+                            for (int i = 0; i < 3; i++) {
+                                playerInstance.cardsInHand.remove(selectCards.get(i));
+                                cardOnDesk.add(selectCards.get(i));
+                            }
+                            return true;
+                        }
                     }
                 }
                 break;
             case 4:
-                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
-                    isAbleToShow = true;
-                    lastShownCardsType = CardsType.Quad;
-                } else if (lastShownCardsType == CardsType.Quad) {
-                    if (cardArrayList.get(0).compareTo(cardOnDesk.get(0)) == 1) {
-                        isAbleToShow = true;
+                if (lastShownCardsType == CardsType.None || lastShownPlayerIndex == playerInstance.playerId) {
+                    if (selectCards.get(0).getCardNumber() == selectCards.get(1).getCardNumber() &&
+                            selectCards.get(0).getCardNumber() == selectCards.get(2).getCardNumber() &&
+                            selectCards.get(0).getCardNumber() == selectCards.get(3).getCardNumber()) {
                         lastShownCardsType = CardsType.Quad;
+                        lastShownPlayerIndex = this.playerInstance.playerId;
+                        for (int i = 0; i < 4; i++) {
+                            playerInstance.cardsInHand.remove( selectCards.get(i));
+                            cardOnDesk.add(selectCards.get(i));
+                        }
+                        return true;
+                    }
+                } else if (lastShownCardsType == CardsType.Quad) {
+                    if (selectCards.get(0).getCardNumber() == selectCards.get(1).getCardNumber() &&
+                            selectCards.get(0).getCardNumber() == selectCards.get(2).getCardNumber() &&
+                            selectCards.get(0).getCardNumber() == selectCards.get(3).getCardNumber()) {
+                        if (selectCards.get(3).compareTo(cardOnDesk.get(3)) == 1) {
+                            cardOnDesk.clear();
+                            lastShownPlayerIndex = this.playerInstance.playerId;
+                            for (int i = 0; i < 4; i++) {
+                                playerInstance.cardsInHand.remove( selectCards.get(i));
+                                cardOnDesk.add(selectCards.get(i));
+                            }
+                            return true;
+                        }
                     }
                 }
                 break;
             case 5:
-                if(lastShownPlayerIndex==playerInstance.playerId ||lastShownCardsType == CardsType.None)
-                {
-                    //同花顺>铁支>葫芦>同花>顺子
-                    //所以优先判断同花顺
-                    //TODO：判断五张牌牌型
+                if (lastShownCardsType == CardsType.None || lastShownPlayerIndex == playerInstance.playerId) {
+                    if (isString(selectCards) && isSameColor(selectCards)) {
+                        lastShownCardsType = CardsType.SameColorString;
+                        lastShownPlayerIndex = this.playerInstance.playerId;
+                        for (int i = 0; i < 5; i++) {
+                            playerInstance.cardsInHand.remove( selectCards.get(i));
+                            cardOnDesk.add(selectCards.get(i));
+                        }
+                        return true;
+                    }
+                    if (isFourPlusOne(selectCards)) {
+                        lastShownCardsType = CardsType.FourPlusOne;
+                        lastShownPlayerIndex = this.playerInstance.playerId;
+                        for (int i = 0; i < 5; i++) {
+                            playerInstance.cardsInHand.remove( selectCards.get(i));
+                            cardOnDesk.add(selectCards.get(i));
+                        }
+                        return true;
+                    }
+                    if (isThreePlusTwo(selectCards)) {
+                        lastShownCardsType = CardsType.ThreePlusTwo;
+                        lastShownPlayerIndex = this.playerInstance.playerId;
+                        for (int i = 0; i < 5; i++) {
+                            playerInstance.cardsInHand.remove( selectCards.get(i));
+                            cardOnDesk.add(selectCards.get(i));
+                        }
+                        return true;
+                    }
+                    if (isSameColor(selectCards)) {
+                        lastShownCardsType = CardsType.SameColor;
+                        lastShownPlayerIndex = this.playerInstance.playerId;
+                        for (int i = 0; i < 5; i++) {
+                            playerInstance.cardsInHand.remove( selectCards.get(i));
+                            cardOnDesk.add(selectCards.get(i));
+                        }
+                        return true;
+                    }
+                    if (isString(selectCards)) {
+                        lastShownCardsType = CardsType.String;
+                        lastShownPlayerIndex = this.playerInstance.playerId;
+                        for (int i = 0; i < 5; i++) {
+                            playerInstance.cardsInHand.remove( selectCards.get(i));
+                            cardOnDesk.add(selectCards.get(i));
+                        }
+                        return true;
+                    }
+                } else switch (lastShownCardsType) {
+                    case SameColorString:
+                        if (isString(selectCards) && isSameColor(selectCards)) {
+                            if (selectCards.get(4).compareTo(cardOnDesk.get(4)) == 1) {
+                                cardOnDesk.clear();
+                                lastShownCardsType = CardsType.SameColorString;
+                                lastShownPlayerIndex = this.playerInstance.playerId;
+                                for (int i = 0; i < 5; i++) {
+                                    playerInstance.cardsInHand.remove(selectCards.get(i));
+                                    cardOnDesk.add(selectCards.get(i));
+                                }
+                                return true;
+                            }
+                        }
+                        break;
+                    case FourPlusOne:
+                        if (isFourPlusOne(selectCards)) {
+                            if (selectCards.get(2).compareTo(cardOnDesk.get(2)) == 1) {
+                                cardOnDesk.clear();
+                                lastShownCardsType = CardsType.FourPlusOne;
+                                lastShownPlayerIndex = this.playerInstance.playerId;
+                                for (int i = 0; i < 5; i++) {
+                                    playerInstance.cardsInHand.remove( selectCards.get(i));
+                                    cardOnDesk.add(selectCards.get(i));
+                                }
+                                return true;
+                            }
+                        }
+                        break;
+                    case ThreePlusTwo:
+                        if (isThreePlusTwo(selectCards)) {
+                            if (selectCards.get(2).compareTo(cardOnDesk.get(2)) == 1) {
+                                cardOnDesk.clear();
+                                lastShownCardsType = CardsType.ThreePlusTwo;
+                                lastShownPlayerIndex = this.playerInstance.playerId;
+                                for (int i = 0; i < 5; i++) {
+                                    playerInstance.cardsInHand.remove( selectCards.get(i));
+                                    cardOnDesk.add(selectCards.get(i));
+                                }
+                                return true;
+                            }
+                        }
+                        break;
+                    case SameColor:
+                        if (isThreePlusTwo(selectCards)) {
+                            if (selectCards.get(4).getCardColor() > cardOnDesk.get(4).getCardColor()) {
+                                cardOnDesk.clear();
+                                lastShownCardsType = CardsType.ThreePlusTwo;
+                                lastShownPlayerIndex = this.playerInstance.playerId;
+                                for (int i = 0; i < 5; i++) {
+                                    playerInstance.cardsInHand.remove( selectCards.get(i));
+                                    cardOnDesk.add(selectCards.get(i));
+                                }
+                                return true;
+                            }
+                            //花色相同比最大的牌
+                            if (selectCards.get(4).getCardColor() == cardOnDesk.get(4).getCardColor() && selectCards.get(4).getCardNumber() > cardOnDesk.get(4).getCardNumber()) {
+                                lastShownCardsType = CardsType.ThreePlusTwo;
+                                cardOnDesk.clear();
+                                lastShownPlayerIndex = this.playerInstance.playerId;
+                                for (int i = 0; i < 5; i++) {
+                                    playerInstance.cardsInHand.remove( selectCards.get(i));
+                                    cardOnDesk.add(selectCards.get(i));
+                                }
+                                return true;
+                            }
+                        }
+                        break;
+                    case String:
+                        if (isString(selectCards)) {
+                            cardOnDesk.clear();
+                            if (selectCards.get(4).compareTo(cardOnDesk.get(4).getCardNumber()) == 1) {
+                                lastShownPlayerIndex = this.playerInstance.playerId;
+                                lastShownCardsType = CardsType.String;
+                                for (int i = 0; i < 5; i++) {
+                                    playerInstance.cardsInHand.remove( selectCards.get(i));
+                                    cardOnDesk.add(selectCards.get(i));
+                                }
+                            }
+                            return true;
+                        }
+                        break;
                 }
                 break;
-            default:
-                break;
         }
-        if (isAbleToShow) {
-            cardOnDesk = cardArrayList;
-            return cardArrayList;
-        } else return null;
+        return false;
+    }
+
+    public boolean isString(ArrayList<card> selectCards) {
+        int start = selectCards.get(0).getCardNumber();
+        //牌为A2345
+        if (selectCards.get(4).getCardNumber() == 15 &&
+                selectCards.get(0).getCardNumber() == 3 &&
+                selectCards.get(1).getCardNumber() == 4 &&
+                selectCards.get(2).getCardNumber() == 5 &&
+                selectCards.get(3).getCardNumber() == 14
+        ) return true;
+        //A不能出现在头尾之外的地方
+        if (selectCards.get(1).getCardNumber() == 14 || selectCards.get(2).getCardNumber() == 14 || selectCards.get(3).getCardNumber() == 14)
+            return false;
+
+        for (int i = 1; i < 5; i++) {
+            if ((++start) != selectCards.get(i).getCardNumber())
+                return false;
+        }
+        return true;
+    }
+
+    public boolean isSameColor(ArrayList<card> selectCards) {
+        int color = selectCards.get(0).getCardColor();
+        for (int i = 1; i < 5; i++) {
+            if (color != selectCards.get(i).getCardColor())
+                return false;
+        }
+        return true;
+    }
+
+    //葫芦比第三张牌大小
+    public boolean isThreePlusTwo(ArrayList<card> selectCards) {
+        if (selectCards.get(0).getCardNumber() == selectCards.get(1).getCardNumber() &&
+                selectCards.get(0).getCardNumber() == selectCards.get(2).getCardNumber())
+            if (selectCards.get(3).getCardNumber() == selectCards.get(4).getCardNumber()) {
+                return true;
+            }
+        if (selectCards.get(2).getCardNumber() == selectCards.get(3).getCardNumber() &&
+                selectCards.get(4).getCardNumber() == selectCards.get(2).getCardNumber())
+            if (selectCards.get(0).getCardNumber() == selectCards.get(1).getCardNumber()) {
+                return true;
+            }
+        return false;
+    }
+
+    public boolean isFourPlusOne(ArrayList<card> selectCards) {
+        if (selectCards.get(0).getCardNumber() == selectCards.get(1).getCardNumber() &&
+                selectCards.get(0).getCardNumber() == selectCards.get(2).getCardNumber() &&
+                selectCards.get(0).getCardNumber() == selectCards.get(3).getCardNumber())
+            return true;
+        if (selectCards.get(4).getCardNumber() == selectCards.get(1).getCardNumber() &&
+                selectCards.get(4).getCardNumber() == selectCards.get(2).getCardNumber() &&
+                selectCards.get(4).getCardNumber() == selectCards.get(3).getCardNumber())
+            return true;
+        return false;
     }
 }
+//    public ArrayList<card> showCards(playerObject playerInstance, int[] indexArray, int cardsSelected) {
+//        ArrayList<card> cardArrayList = new ArrayList<>();
+//        int playerCardsLeft = playerInstance.cardsInHand.size();
+//
+//
+//        boolean isAbleToShow = false;
+//
+//        for (int i = 0; i < cardsSelected; i++)
+//            cardArrayList.add(playerInstance.cardsInHand.get(indexArray[i]));
+//
+//
+//        switch (cardsSelected) {
+//            case 1:
+//
+//                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
+//                    isAbleToShow = true;
+//                    lastShownCardsType = CardsType.Single;
+//                } else if (lastShownCardsType == CardsType.Single) {
+//                    if (cardArrayList.get(0).compareTo(cardOnDesk.get(0)) == 1) {
+//                        isAbleToShow = true;
+//                        lastShownCardsType = CardsType.Single;
+//                    }
+//                }
+//                break;
+//            case 2:
+//                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
+//                    isAbleToShow = true;
+//                    lastShownCardsType = CardsType.Double;
+//                } else if (lastShownCardsType == CardsType.Double) {
+//                    card newCompareCard;
+//                    card oldCompareCard;
+//                    if (cardArrayList.get(0).compareTo(cardArrayList.get(1)) == 1)
+//                        newCompareCard = cardArrayList.get(0);
+//                    else newCompareCard = cardArrayList.get(1);
+//                    if (cardOnDesk.get(0).compareTo(cardOnDesk.get(1)) == 1) oldCompareCard = cardOnDesk.get(0);
+//                    else oldCompareCard = cardOnDesk.get(1);
+//                    if (newCompareCard.compareTo(oldCompareCard) == 1) {
+//                        isAbleToShow = true;
+//                        lastShownCardsType = CardsType.Double;
+//                    }
+//                }
+//                break;
+//            case 3:
+//                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
+//                    isAbleToShow = true;
+//                    lastShownCardsType = CardsType.Triple;
+//                } else if (lastShownCardsType == CardsType.Triple) {
+//                    if (cardArrayList.get(0).compareTo(cardOnDesk.get(0)) == 1) {
+//                        isAbleToShow = true;
+//                        lastShownCardsType = CardsType.Triple;
+//                    }
+//                }
+//                break;
+//            case 4:
+//                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
+//                    isAbleToShow = true;
+//                    lastShownCardsType = CardsType.Quad;
+//                } else if (lastShownCardsType == CardsType.Quad) {
+//                    if (cardArrayList.get(0).compareTo(cardOnDesk.get(0)) == 1) {
+//                        isAbleToShow = true;
+//                        lastShownCardsType = CardsType.Quad;
+//                    }
+//                }
+//                break;
+//            case 5:
+//                if(lastShownPlayerIndex==playerInstance.playerId ||lastShownCardsType == CardsType.None)
+//                {
+//                    //同花顺>铁支>葫芦>同花>顺子
+//                    //所以优先判断同花顺
+//                    //TODO：判断五张牌牌型
+//                }
+//                break;
+//            default:
+//                break;
+//        }
+//        if (isAbleToShow) {
+//            cardOnDesk = cardArrayList;
+//            return cardArrayList;
+//        } else return null;
+//    }
+
 
 
 class botObject extends playerObject

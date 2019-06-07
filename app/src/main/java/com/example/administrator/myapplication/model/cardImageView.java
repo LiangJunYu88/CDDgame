@@ -20,7 +20,7 @@ public class cardImageView extends View implements cardImage {
     private int height;
     private Paint paint;
     private Bitmap mbitmap;
-    private card mcard;
+    private card  mcard;
     private int left;
     private int top;
     private int right;
@@ -76,21 +76,19 @@ public class cardImageView extends View implements cardImage {
                 scrollBy(0,-20);
                 //
                 isClicked = !isClicked;
-                mcard.isSelected = false;
             }
             else
             {
                 //向上移动
                 scrollBy(0,20);
                 isClicked = !isClicked;
-                mcard.isSelected = true;
             }
 
 
     }
     //出牌时将卡牌移到中间
     public void moveToCenter(int num){
-       scrollBy(left -width/3-(num*100),height/3);
+       scrollBy(left -500-(num*100),height/3);
     }
 
       //画出卡牌

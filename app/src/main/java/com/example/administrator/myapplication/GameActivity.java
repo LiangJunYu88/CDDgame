@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class GameActivity extends AppCompatActivity {
     private ArrayList<cardImageView> playerHandCards;
-    public ArrayList<cardImageView> cardOnDesk;//牌桌上打出的牌
+    private ArrayList<cardImageView> deskCards;//牌桌上打出的牌
     private ConstraintLayout layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +27,11 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         layout = findViewById(R.id.layout_game);
         playerHandCards = new ArrayList<>();
-        cardOnDesk = new ArrayList<>();
+        deskCards = new ArrayList<>();
         MainGameModel.getMainGameModel().ini();
         //画出玩家手牌
         for (int i=0;i<13;i++){
-            paintCards(MainGameModel.getMainGameModel().playerInstance.cardsInHand.get(i),i);
+            paintHandCards(MainGameModel.getMainGameModel().playerInstance.cardsInHand.get(i),i);
         }
     }
     @Override
@@ -70,10 +70,17 @@ public class GameActivity extends AppCompatActivity {
         }
         return true;
     }
-    //在牌桌上画出扑克
-    private void paintCards(card mCard,int num){
-        playerHandCards.add(new cardImageView(this,mCard,num));
+    //在牌桌上画出手牌
+    private void paintHandCards(card mcard,int num){
+        playerHandCards.add(new cardImageView(this,mcard,num));
         layout.addView(playerHandCards.get(playerHandCards.size()-1));
+
+    }
+    //画打出的牌
+    private void paintShowCards(card mcard,int num){
+       deskCards.add(new cardImageView(this,mcard,num));
+        layout.addView(deskCards.get(deskCards.size()-1));
+        deskCards.get(deskCards.size()-1).moveToCenter(num);
     }
     //重选按钮
     public void reSelect(View view){
@@ -84,43 +91,33 @@ public class GameActivity extends AppCompatActivity {
     }
     //出牌按钮
     public boolean showCards(View view) {
-        cardImageView temp;
-        for (int i = 0; i < cardOnDesk.size(); i++) {
-            cardOnDesk.get(i).setVisibility(View.GONE);
+        //清空打出的牌
+        for (int i = 0; i < deskCards.size(); i++) {
+            deskCards.get(i).setVisibility(View.GONE);
         }
-        cardOnDesk.clear();
-
-        //计算已选中的手牌数量
-
-        //如果手牌数量数量大于5直接判断无法出牌
-        int cardsSelected = 0;
-        int[] clickedCardsIndexArray = new int[13];
-        for (int i = 0; i < playerHandCards.size(); i++) {
-            if (playerHandCards.get(i).getIsClicked()) {
-                clickedCardsIndexArray[cardsSelected] = i;
-                cardsSelected++;
+        deskCards.clear();
+        ArrayList<card> selectedCards = new ArrayList<>();
+        ArrayList<Integer> selectedCardsIndex = new ArrayList<>();
+        for (int i=0;i < playerHandCards.size();i++){
+            if (playerHandCards.get(i).getIsClicked()){
+                selectedCards.add(MainGameModel.getMainGameModel().playerInstance.cardsInHand.get(i));
+                selectedCardsIndex.add(i);
             }
         }
-        if (cardsSelected > 5) return false;
+        if (MainGameModel.getMainGameModel().showCards(MainGameModel.getMainGameModel().playerInstance,selectedCards,selectedCardsIndex)) {
 
-        ArrayList<card> cardsShouldBeOnDesk;
-
-
-        cardsShouldBeOnDesk = MainGameModel.getMainGameModel().showCards(
-                MainGameModel.getMainGameModel().playerInstance, clickedCardsIndexArray, cardsSelected);
-        if(cardsShouldBeOnDesk == null) return false;
-
-        //TODO：打出的手牌已经存在GameModel的cardOnDesk数组中，重新绘制
-        /*
-        for (int i = 0; i < playerHandCards.size(); i++) {
-            if (playerHandCards.get(i).getIsClicked()) {
-                cardOnDesk.add(playerHandCards.get(i));
-                playerHandCards.get(i).moveToCenter(cardOnDesk.size());
-                playerHandCards.remove(i);
-                i = i - 1;
+            //重新画手牌
+            for (int i = 0; i < playerHandCards.size(); i++) {
+                playerHandCards.get(i).setVisibility(View.GONE);
+            }
+            playerHandCards.clear();
+            for (int i = 0; i < MainGameModel.getMainGameModel().playerInstance.cardsInHand.size(); i++) {
+                paintHandCards(MainGameModel.getMainGameModel().playerInstance.cardsInHand.get(i), i);
+            }
+            for (int i=0;i < MainGameModel.getMainGameModel().cardOnDesk.size();i++){
+                paintShowCards(MainGameModel.getMainGameModel().cardOnDesk.get(i),i);
             }
         }
-        */
         return true;
     }
 
