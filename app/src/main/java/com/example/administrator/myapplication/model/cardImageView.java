@@ -35,13 +35,15 @@ public class cardImageView extends View implements cardImage {
         this.num = num;
         Resources r = this.getResources();
         DisplayMetrics dm = r.getDisplayMetrics();
+        width = dm.widthPixels;
+        height = dm.heightPixels;
         paint = new Paint();
         src = new Rect();
         des = new RectF();
         isClicked = false;
         mbitmap = BitmapFactory.decodeResource(context.getResources(), cardImage[mcard.getCardNumber()-3][mcard.getCardColor()]);
-        left = 300+100*(num-1);
-        top = 800;
+        left = dm.widthPixels/4+100*(num-1);
+        top = dm.heightPixels*3/4;
         right = left + mbitmap.getWidth();
         bottom = top + mbitmap.getHeight();
         System.out.println("created");
