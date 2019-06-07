@@ -88,7 +88,7 @@ public class cardImageView extends View implements cardImage {
     }
     //出牌时将卡牌移到中间
     public void moveToCenter(int num){
-       scrollBy(left -500-(num*100),400);
+       scrollBy(left -width/3-(num*100),height/3);
     }
 
       //画出卡牌
