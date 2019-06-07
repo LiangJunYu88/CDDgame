@@ -1,10 +1,10 @@
 package com.example.administrator.myapplication.model;
 
-public class card
+public class card implements Comparable
 {
     private color cardColor;
     private int cardNumber;
-
+    public boolean isSelected;
 
     public int getCardColor() {
         int temp=0;
@@ -24,7 +24,23 @@ public class card
         }
         return temp;
     }
-
+    @Override
+    public int compareTo(Object c)
+    {
+        if(c instanceof card)
+        {
+            if(this.getCardNumber()>((card) c).getCardNumber())return 1;
+            else if(this.getCardNumber()<((card) c).getCardNumber())return -1;
+            else if(this.getCardNumber()==((card) c).getCardNumber())
+            {
+                if(this.getCardColor()<((card) c).getCardColor())
+                    return 1;
+                if(this.getCardColor()>((card) c).getCardColor())
+                    return -1;
+            }
+        }
+        return 0;
+    }
 
     public int getCardNumber() {
         return cardNumber;
@@ -34,6 +50,7 @@ public class card
     {
         cardNumber = n;
         cardColor = c;
+        isSelected = false;
     }
 
   public  enum color{

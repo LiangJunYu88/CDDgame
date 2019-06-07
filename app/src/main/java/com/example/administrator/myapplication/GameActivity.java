@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import com.example.administrator.myapplication.model.*;
 
 import android.view.KeyEvent;
@@ -82,24 +83,48 @@ public class GameActivity extends AppCompatActivity {
         }
     }
     //出牌按钮
-    public void chupai(View view){
+    public boolean chupai(View view) {
         cardImageView temp;
-        for (int i=0;i<cardOnDesk.size();i++){
+        for (int i = 0; i < cardOnDesk.size(); i++) {
             cardOnDesk.get(i).setVisibility(View.GONE);
         }
         cardOnDesk.clear();
-        for (int i=0;i<playerHandCards.size();i++){
-            if (playerHandCards.get(i).getIsClicked()){
+
+        //计算已选中的手牌数量
+
+        //如果手牌数量数量大于5直接判断无法出牌
+        int cardsSelected = 0;
+        int[] clickedCardsIndexArray = new int[13];
+        for (int i = 0; i < playerHandCards.size(); i++) {
+            if (playerHandCards.get(i).getIsClicked()) {
+                clickedCardsIndexArray[cardsSelected] = i;
+                cardsSelected++;
+            }
+        }
+        if (cardsSelected > 5) return false;
+
+        ArrayList<card> cardsShouldBeOnDesk;
+
+
+        cardsShouldBeOnDesk = MainGameModel.getMainGameModel().showCards(
+                MainGameModel.getMainGameModel().playerInstance, clickedCardsIndexArray, cardsSelected);
+        if(cardsShouldBeOnDesk == null) return false;
+
+        //TODO：打出的手牌已经存在GameModel的cardOnDesk数组中，重新绘制
+        /*
+        for (int i = 0; i < playerHandCards.size(); i++) {
+            if (playerHandCards.get(i).getIsClicked()) {
                 cardOnDesk.add(playerHandCards.get(i));
                 playerHandCards.get(i).moveToCenter(cardOnDesk.size());
                 playerHandCards.remove(i);
-                i=i-1;
+                i = i - 1;
             }
         }
+        */
+        return true;
+    }
 
         //出牌逻辑
-
-    }
     //返回菜单按钮
     public void backMenu(View view){
       finish();

@@ -20,7 +20,7 @@ public class cardImageView extends View implements cardImage {
     private int height;
     private Paint paint;
     private Bitmap mbitmap;
-    private card  mcard;
+    private card mcard;
     private int left;
     private int top;
     private int right;
@@ -74,12 +74,14 @@ public class cardImageView extends View implements cardImage {
                 scrollBy(0,-20);
                 //
                 isClicked = !isClicked;
+                mcard.isSelected = false;
             }
             else
             {
                 //向上移动
                 scrollBy(0,20);
                 isClicked = !isClicked;
+                mcard.isSelected = true;
             }
 
 
