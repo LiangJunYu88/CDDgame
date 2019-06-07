@@ -35,13 +35,15 @@ public class cardImageView extends View implements cardImage {
         this.num = num;
         Resources r = this.getResources();
         DisplayMetrics dm = r.getDisplayMetrics();
+        width = dm.widthPixels;
+        height = dm.heightPixels;
         paint = new Paint();
         src = new Rect();
         des = new RectF();
         isClicked = false;
         mbitmap = BitmapFactory.decodeResource(context.getResources(), cardImage[mcard.getCardNumber()-3][mcard.getCardColor()]);
-        left = 300+100*(num-1);
-        top = 800;
+        left = dm.widthPixels/4+100*(num-1);
+        top = dm.heightPixels*3/4;
         right = left + mbitmap.getWidth();
         bottom = top + mbitmap.getHeight();
         System.out.println("created");
@@ -88,7 +90,7 @@ public class cardImageView extends View implements cardImage {
     }
     //出牌时将卡牌移到中间
     public void moveToCenter(int num){
-       scrollBy(left -500-(num*100),400);
+       scrollBy(left -width/3-(num*100),height/3);
     }
 
       //画出卡牌
