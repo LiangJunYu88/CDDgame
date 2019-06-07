@@ -71,19 +71,19 @@ public class GameActivity extends AppCompatActivity {
         return true;
     }
     //在牌桌上画出扑克
-    private void paintCards(card mcard,int num){
-        playerHandCards.add(new cardImageView(this,mcard,num));
+    private void paintCards(card mCard,int num){
+        playerHandCards.add(new cardImageView(this,mCard,num));
         layout.addView(playerHandCards.get(playerHandCards.size()-1));
     }
     //重选按钮
-    public void chongxuan(View view){
+    public void reSelect(View view){
         for (int i=0;i<playerHandCards.size();i++){
             if (playerHandCards.get(i).getIsClicked())
                 playerHandCards.get(i).whenClick();
         }
     }
     //出牌按钮
-    public boolean chupai(View view) {
+    public boolean showCards(View view) {
         cardImageView temp;
         for (int i = 0; i < cardOnDesk.size(); i++) {
             cardOnDesk.get(i).setVisibility(View.GONE);
