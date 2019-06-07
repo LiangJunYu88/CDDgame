@@ -19,9 +19,9 @@ public class MainGameModel {
     //属性
     static private MainGameModel mainGameModelInstance;
     public ArrayList<card> cardDeck;//用于存储卡牌的牌堆
-    public static ArrayList<card> cardOnDesk;//存储桌上的牌
-    public static int lastShownPlayerIndex;//上一位出牌的玩家
-    public static CardsType lastShownCardsType = CardsType.None;//上一轮打出的牌型
+    public  ArrayList<card> cardOnDesk;//存储桌上的牌
+    public  int lastShownPlayerIndex;//上一位出牌的玩家
+    public CardsType lastShownCardsType;//上一轮打出的牌型
     public playerObject playerInstance;//人类玩家的玩家对象
     public botObject[] botInstance;//电脑玩家
 
@@ -33,9 +33,14 @@ public class MainGameModel {
         cardDeck = new ArrayList<>();
         cardOnDesk = new ArrayList<>();
         //创建玩家与电脑玩家的对象
+        lastShownCardsType = CardsType.None;
         playerInstance = new playerObject();
         for (int i = 1; i <= 3; i++)
             botInstance[i - 1] = new botObject(i);
+    }
+
+    public static void destroy(){
+        mainGameModelInstance = null;
     }
 
     public void ini() {
@@ -43,7 +48,12 @@ public class MainGameModel {
         createNewCardDeck();
         //发牌
         distributeCards();
-        //@TODO:判断第一个出牌的玩家，如果不是人类玩家出牌，则应先执行BOT出牌
+        //控制轮次
+        if (lastShownPlayerIndex!=0){
+            cardOnDesk.add(new card(card.color.diamond,3));
+            lastShownCardsType=CardsType.Single;
+        }
+
     }
 
     private void createNewCardDeck() {
@@ -99,15 +109,15 @@ public class MainGameModel {
         //手牌大于5重选
         if (selectCards.size() > 5) return false;
         //第一个出牌者的牌要有方块三
-//        if (lastShownCardsType == CardsType.None) {
-//            boolean hasThree = false;
-//            for (int i = 0; i < selectCards.size(); i++) {
-//                if (selectCards.get(i).getCardColor() == 0 && selectCards.get(i).getCardNumber() == 3)
-//                    hasThree = true;
-//            }
-//            if (!hasThree)
-//                return false;
-//        }
+        if (lastShownCardsType == CardsType.None) {
+            boolean hasThree = false;
+            for (int i = 0; i < selectCards.size(); i++) {
+                if (selectCards.get(i).getCardColor() == 0 && selectCards.get(i).getCardNumber() == 3)
+                    hasThree = true;
+            }
+            if (!hasThree)
+                return false;
+        }
         //给selectCards排序
         for (int i = 0; i < selectCards.size() - 1; i++)
             for (int j = 0; j < selectCards.size() - i - 1; j++) {
@@ -129,17 +139,18 @@ public class MainGameModel {
                 if (lastShownCardsType == CardsType.None || lastShownPlayerIndex == playerInstance.playerId) {
                     lastShownCardsType = CardsType.Single;
                     playerInstance.cardsInHand.remove(selectCards.get(0));//移除手牌
+                    cardOnDesk.clear();
                     cardOnDesk.add(selectCards.get(0));
                     lastShownPlayerIndex = this.playerInstance.playerId;//修改上一个出牌玩家
                     return true;
                 } else if (lastShownCardsType == CardsType.Single) {
-                    if (selectCards.get(0).compareTo(cardDeck.get(0)) == 1) {
-                        cardOnDesk.clear();
+                    if (selectCards.get(0).compareTo(cardOnDesk.get(0)) == 1) {
+
                         lastShownCardsType = CardsType.Single;
                         playerInstance.cardsInHand.remove(selectCards.get(0));//移除手牌
+                        cardOnDesk.clear();
                         cardOnDesk.add(selectCards.get(0));
                         lastShownPlayerIndex = this.playerInstance.playerId;
-                        cardOnDesk.clear();
                         return true;
                     }
                 }
@@ -149,6 +160,7 @@ public class MainGameModel {
                     if (selectCards.get(0).getCardNumber() != selectCards.get(1).getCardNumber())
                         return false;
                     lastShownCardsType = CardsType.Double;
+                    cardOnDesk.clear();
                     for (int i = 0; i < 2; i++) {
                         playerInstance.cardsInHand.remove( selectCards.get(i));
                         cardOnDesk.add(selectCards.get(i));
@@ -177,6 +189,7 @@ public class MainGameModel {
                             selectCards.get(0).getCardNumber() == selectCards.get(2).getCardNumber()) {
                         lastShownCardsType = CardsType.Triple;
                         lastShownPlayerIndex = this.playerInstance.playerId;
+                        cardOnDesk.clear();
                         for (int i = 0; i < 3; i++) {
                             playerInstance.cardsInHand.remove( selectCards.get(i));
                             cardOnDesk.add(selectCards.get(i));
@@ -204,6 +217,7 @@ public class MainGameModel {
                             selectCards.get(0).getCardNumber() == selectCards.get(2).getCardNumber() &&
                             selectCards.get(0).getCardNumber() == selectCards.get(3).getCardNumber()) {
                         lastShownCardsType = CardsType.Quad;
+                        cardOnDesk.clear();
                         lastShownPlayerIndex = this.playerInstance.playerId;
                         for (int i = 0; i < 4; i++) {
                             playerInstance.cardsInHand.remove( selectCards.get(i));
@@ -231,6 +245,7 @@ public class MainGameModel {
                 if (lastShownCardsType == CardsType.None || lastShownPlayerIndex == playerInstance.playerId) {
                     if (isString(selectCards) && isSameColor(selectCards)) {
                         lastShownCardsType = CardsType.SameColorString;
+                        cardOnDesk.clear();
                         lastShownPlayerIndex = this.playerInstance.playerId;
                         for (int i = 0; i < 5; i++) {
                             playerInstance.cardsInHand.remove( selectCards.get(i));
@@ -240,6 +255,7 @@ public class MainGameModel {
                     }
                     if (isFourPlusOne(selectCards)) {
                         lastShownCardsType = CardsType.FourPlusOne;
+                        cardOnDesk.clear();
                         lastShownPlayerIndex = this.playerInstance.playerId;
                         for (int i = 0; i < 5; i++) {
                             playerInstance.cardsInHand.remove( selectCards.get(i));
@@ -249,6 +265,7 @@ public class MainGameModel {
                     }
                     if (isThreePlusTwo(selectCards)) {
                         lastShownCardsType = CardsType.ThreePlusTwo;
+                        cardOnDesk.clear();
                         lastShownPlayerIndex = this.playerInstance.playerId;
                         for (int i = 0; i < 5; i++) {
                             playerInstance.cardsInHand.remove( selectCards.get(i));
@@ -258,6 +275,7 @@ public class MainGameModel {
                     }
                     if (isSameColor(selectCards)) {
                         lastShownCardsType = CardsType.SameColor;
+                        cardOnDesk.clear();
                         lastShownPlayerIndex = this.playerInstance.playerId;
                         for (int i = 0; i < 5; i++) {
                             playerInstance.cardsInHand.remove( selectCards.get(i));
@@ -267,6 +285,7 @@ public class MainGameModel {
                     }
                     if (isString(selectCards)) {
                         lastShownCardsType = CardsType.String;
+                        cardOnDesk.clear();
                         lastShownPlayerIndex = this.playerInstance.playerId;
                         for (int i = 0; i < 5; i++) {
                             playerInstance.cardsInHand.remove( selectCards.get(i));
@@ -381,7 +400,9 @@ public class MainGameModel {
         }
         return true;
     }
+    public void pass(){
 
+    }
     public boolean isSameColor(ArrayList<card> selectCards) {
         int color = selectCards.get(0).getCardColor();
         for (int i = 1; i < 5; i++) {
@@ -418,87 +439,6 @@ public class MainGameModel {
         return false;
     }
 }
-//    public ArrayList<card> showCards(playerObject playerInstance, int[] indexArray, int cardsSelected) {
-//        ArrayList<card> cardArrayList = new ArrayList<>();
-//        int playerCardsLeft = playerInstance.cardsInHand.size();
-//
-//
-//        boolean isAbleToShow = false;
-//
-//        for (int i = 0; i < cardsSelected; i++)
-//            cardArrayList.add(playerInstance.cardsInHand.get(indexArray[i]));
-//
-//
-//        switch (cardsSelected) {
-//            case 1:
-//
-//                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
-//                    isAbleToShow = true;
-//                    lastShownCardsType = CardsType.Single;
-//                } else if (lastShownCardsType == CardsType.Single) {
-//                    if (cardArrayList.get(0).compareTo(cardOnDesk.get(0)) == 1) {
-//                        isAbleToShow = true;
-//                        lastShownCardsType = CardsType.Single;
-//                    }
-//                }
-//                break;
-//            case 2:
-//                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
-//                    isAbleToShow = true;
-//                    lastShownCardsType = CardsType.Double;
-//                } else if (lastShownCardsType == CardsType.Double) {
-//                    card newCompareCard;
-//                    card oldCompareCard;
-//                    if (cardArrayList.get(0).compareTo(cardArrayList.get(1)) == 1)
-//                        newCompareCard = cardArrayList.get(0);
-//                    else newCompareCard = cardArrayList.get(1);
-//                    if (cardOnDesk.get(0).compareTo(cardOnDesk.get(1)) == 1) oldCompareCard = cardOnDesk.get(0);
-//                    else oldCompareCard = cardOnDesk.get(1);
-//                    if (newCompareCard.compareTo(oldCompareCard) == 1) {
-//                        isAbleToShow = true;
-//                        lastShownCardsType = CardsType.Double;
-//                    }
-//                }
-//                break;
-//            case 3:
-//                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
-//                    isAbleToShow = true;
-//                    lastShownCardsType = CardsType.Triple;
-//                } else if (lastShownCardsType == CardsType.Triple) {
-//                    if (cardArrayList.get(0).compareTo(cardOnDesk.get(0)) == 1) {
-//                        isAbleToShow = true;
-//                        lastShownCardsType = CardsType.Triple;
-//                    }
-//                }
-//                break;
-//            case 4:
-//                if (lastShownPlayerIndex == playerInstance.playerId || lastShownCardsType == CardsType.None) {
-//                    isAbleToShow = true;
-//                    lastShownCardsType = CardsType.Quad;
-//                } else if (lastShownCardsType == CardsType.Quad) {
-//                    if (cardArrayList.get(0).compareTo(cardOnDesk.get(0)) == 1) {
-//                        isAbleToShow = true;
-//                        lastShownCardsType = CardsType.Quad;
-//                    }
-//                }
-//                break;
-//            case 5:
-//                if(lastShownPlayerIndex==playerInstance.playerId ||lastShownCardsType == CardsType.None)
-//                {
-//                    //同花顺>铁支>葫芦>同花>顺子
-//                    //所以优先判断同花顺
-//                    //TODO：判断五张牌牌型
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//        if (isAbleToShow) {
-//            cardOnDesk = cardArrayList;
-//            return cardArrayList;
-//        } else return null;
-//    }
-
 
 
 class botObject extends playerObject
@@ -510,6 +450,8 @@ class botObject extends playerObject
         playerId = id;
         botType = BotType.PASSIVE;
     }
-
+    public int getBotCards(){
+        return this.cardsInHand.size();
+    }
     BotType botType;
 }

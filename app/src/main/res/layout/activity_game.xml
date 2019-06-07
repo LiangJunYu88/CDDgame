@@ -106,13 +106,13 @@
         android:id="@+id/botCard2"
         android:layout_width="56dp"
         android:layout_height="74dp"
-        android:layout_marginStart="304dp"
+        android:layout_marginStart="300dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="284dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/botIcon2"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintVertical_bias="0.896"
         app:srcCompat="@drawable/card_bg" />
 
     <ImageView
@@ -137,5 +137,34 @@
         app:layout_constraintTop_toBottomOf="@+id/botIcon3"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/card_bg" />
+
+    <TextView
+        android:id="@+id/bot3Cards"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="108dp"
+        app:layout_constraintStart_toEndOf="@+id/botIcon1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/bot2Cards"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="28dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/botIcon2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/bot1Cards"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="108dp"
+        android:layout_marginEnd="4dp"
+        android:text=""
+        app:layout_constraintEnd_toStartOf="@+id/botIcon3"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

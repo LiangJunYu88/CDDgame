@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class GameActivity extends AppCompatActivity {
     private ArrayList<cardImageView> playerHandCards;
+    private boolean isGameOver = false;
     private ArrayList<cardImageView> deskCards;//牌桌上打出的牌
     private ConstraintLayout layout;
     @Override
@@ -29,6 +30,9 @@ public class GameActivity extends AppCompatActivity {
         playerHandCards = new ArrayList<>();
         deskCards = new ArrayList<>();
         MainGameModel.getMainGameModel().ini();
+        if (MainGameModel.getMainGameModel().lastShownPlayerIndex!=0){
+            paintShowCards(new card(card.color.diamond,3),1);
+        }
         //画出玩家手牌
         for (int i=0;i<13;i++){
             paintHandCards(MainGameModel.getMainGameModel().playerInstance.cardsInHand.get(i),i);
@@ -93,7 +97,7 @@ public class GameActivity extends AppCompatActivity {
     public boolean showCards(View view) {
         //清空打出的牌
         for (int i = 0; i < deskCards.size(); i++) {
-            deskCards.get(i).setVisibility(View.GONE);
+           deskCards.get(i).setVisibility(View.GONE);
         }
         deskCards.clear();
         ArrayList<card> selectedCards = new ArrayList<>();
@@ -118,12 +122,20 @@ public class GameActivity extends AppCompatActivity {
                 paintShowCards(MainGameModel.getMainGameModel().cardOnDesk.get(i),i);
             }
         }
+        if (MainGameModel.getMainGameModel().playerInstance.cardsInHand.size()==0){
+            System.out.println("you win");
+            isGameOver =true;
+            finish();
+        }
+
         return true;
     }
 
         //出牌逻辑
     //返回菜单按钮
-    public void backMenu(View view){
+    public void backMenu(View view)
+    {
+        MainGameModel.destroy();
       finish();
     }
 }
